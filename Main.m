@@ -1,34 +1,51 @@
 function B = Main(filename)
 [B source]= Readimg(filename);%获取每个种子轮廓绝对坐标下的像素集合
 result = source;
+%load svmStruct  
+
 figure(1);
-imshow(source);
 hold on;
 B_items_tangle = zeros(length(B),4);
+img_with_rect = source;
+imshow(img_with_rect);
 for i=1:length(B)
     B_max = max(B{i});
     B_min = min(B{i});
-    B_items_tangle(i,1) = B_min(2);%1234位分别代表矩形框的上下左右像素位
-    B_items_tangle(i,2) = B_max(2);
-    B_items_tangle(i,3) = B_min(1);
-    B_items_tangle(i,4) = B_max(1);
+    B_items_tangle(i,1) = B_min(1);%1234位分别代表矩形框的上下左右像素位
+    B_items_tangle(i,2) = B_max(1);
+    B_items_tangle(i,3) = B_min(2);
+    B_items_tangle(i,4) = B_max(2);
     for j=1:size(B{i},1)
         B{i}(j,1) = B{i}(j,1) - B_min(1)+1;
         B{i}(j,2) = B{i}(j,2) - B_min(2)+1;
     end
     B_max = max(B{i});
     B_min = min(B{i});
-    B_item = zeros(B_max(1)+2,B_max(2)+2);
+    %B_item = zeros(B_max(1)+2,B_max(2)+2);
+     B_item = zeros(70,70);
     for j=1:size(B{i},1)
-        B_item(B{i}(j,1)+1,B{i}(j,2)+1) = 255;
+        B_item(floor((70 - B_max(1)+2)/2)+B{i}(j,1)+1,floor((70 - B_max(2)+2)/2)+B{i}(j,2)+1) = 255;
     end
-    rectangle('Position',[0,0,10,20],'EdgeColor','r');
-    rectangle('Position',[B_items_tangle(i,3),B_items_tangle(i,1),B_items_tangle(i,4) - B_items_tangle(i,3)+1,B_items_tangle(i,2) - B_items_tangle(i,1)+1],'EdgeColor','r');
+%     set(B_item,'position',[0,0,70,70])
+%     im=imresize(B_item,[70,70]);
+%     hogt =hogcalculator(im);  
+%     assess = svmclassify(svmStruct,hogt);%assess的值即为分类结果  
+assess = 1;
+    %rectangle('Position',[0,0,10,20],'EdgeColor','r');
+    %img_with_rect = drawRect(img_with_rect,[B_items_tangle(i,3),B_items_tangle(i,1)],[B_items_tangle(i,4) - B_items_tangle(i,3)+1,B_items_tangle(i,2) - B_items_tangle(i,1)+1],1,[255,0,0]);
+    if(assess>0.99)
+        rectangle('Position',[B_items_tangle(i,3),B_items_tangle(i,1),B_items_tangle(i,4) - B_items_tangle(i,3)+1,B_items_tangle(i,2) - B_items_tangle(i,1)+1],'EdgeColor','g');
+    else
+        rectangle('Position',[B_items_tangle(i,3),B_items_tangle(i,1),B_items_tangle(i,4) - B_items_tangle(i,3)+1,B_items_tangle(i,2) - B_items_tangle(i,1)+1],'EdgeColor','r');
+    end
+        text(B_items_tangle(i,3),B_items_tangle(i,1),sprintf('%d',i),'color','g');
     %line([B_items_tangle(i,3) B_items_tangle(i,1)],[B_items_tangle(i,4) B_items_tangle(i,1)],'color','b','LineWidth',3);
     B_items{i,1} = B_item;%获取每个种子相对坐标下像素
-    %imwrite(B_item,sprintf('%03d.jpg',i),'jpg');
+     path = fullfile('C:\Users\Administrator\Desktop\corn-seeds\seeds',sprintf('%03d.jpg',222+i));
+     %imwrite(B_item,path,'jpg');
 end
-disp(B_items_tangle);
+
+%disp(B_items_tangle);
 
 B_items_circum = zeros(length(B_items),1);%周长
 B_items_area = zeros(length(B_items),1);%面积
@@ -70,8 +87,8 @@ function ExerciseOval(source_border)
 F=@(p,x)p(1)*x(:,1).^2+p(2)*x(:,1).*x(:,2)+p(3)*x(:,2).^2+p(4)*x(:,1)+p(5)*x(:,2)+p(6);%椭圆一般方程
 %?离散数据点
 Up=source_border;%excel文件路径
-UpX=Up(:,1);
-UpY=Up(:,2);
+UpX=Up(:,2);
+UpY=Up(:,1);
 %?p0系数初值
 p0=[1 1 1 1 1 1];
 warning off

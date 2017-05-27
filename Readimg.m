@@ -1,5 +1,5 @@
 function [B ,source]= Readimg(filename)
-str = fullfile('C:\Users\Administrator\Desktop\贺磊\破损玉米识别',filename);
+str = fullfile('C:\Users\Administrator\Desktop\corn-seeds\pics',filename);
 I=imread(str);
 source  = I;
 I0=I;
@@ -20,16 +20,8 @@ else
     I_gray=I;
 end
 
-% 显示
-%figure;
-%hold on;
-%imshow(I_gray);
-%title('灰度图');
 
 I_bw=im2bw(I_gray,0.25);
-%figure
-%imshow(I_bw);
-%title('二值图');
 
 %% 形态学处理
 
