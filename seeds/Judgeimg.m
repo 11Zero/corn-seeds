@@ -1,15 +1,15 @@
-function result = Judgeimg(imgfilename)
-%% 训练完成后保存 svmStruct即可对新输入的对象进行分类了无需再执行上面训练阶段代码  
-svmStruct = load('C:\Users\Administrator\Desktop\corn-seeds\svmStruct.mat');
-svmStruct = svmStruct.svmStruct;
-path = fullfile('C:\Users\Administrator\Desktop\corn-seeds\seeds\good',imgfilename);
-img=imread(path);
-im=imresize(img,[64,64]);
-figure;  
-imshow(im);  
-%img=rgb2gray(im);  
-hogt =hogcalculator(im);  
-result = svmclassify(svmStruct,hogt);%result的值即为分类结果  
+function result = Judgeimg()
+% %% 训练完成后保存 svmStruct即可对新输入的对象进行分类了无需再执行上面训练阶段代码  
+ svmStruct = load('C:\Users\Administrator\Desktop\corn-seeds\svmStruct.mat');
+ svmStruct = svmStruct.svmStruct;
+% path = fullfile('C:\Users\Administrator\Desktop\corn-seeds\seeds\good',imgfilename);
+% img=imread(path);
+% im=imresize(img,[64,64]);
+% figure;  
+% imshow(im);  
+% %img=rgb2gray(im);  
+% hogt =hogcalculator(im);  
+% result = svmclassify(svmStruct,hogt);%result的值即为分类结果  
 %% 批量good检验
 
 ReadList1  = textread('C:\Users\Administrator\Desktop\corn-seeds\seeds\good\list.txt','%s','delimiter','\n');%载入正样本列表  
