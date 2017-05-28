@@ -1,4 +1,4 @@
-function B = Main(filename)
+function result = Main(filename)
 [B source]= Readimg(filename);%获取每个种子轮廓绝对坐标下的像素集合
 result = source;
 %load svmStruct  
@@ -62,10 +62,10 @@ B_items_area_per = zeros(length(B_items),1);%面积占本身矩形面积百分比
 B_items_area_average_per = zeros(length(B_items),1);%面积占平均面积百分比
 B_items_totol_area = 0;%各个种子的总面积
 B_items_totol_tangle_area = 0;%各个种子所在矩形的总面积
-items_num = 5;
+items_num = length(B);
 figure(2);
 for i = 1:items_num
-    subplot(3,5,i),imshow(B_items{i});
+    %subplot(3,5,i),imshow(B_items{i});
     B_items_circum(i,1) = length(find(B_items{i}==255));
     B_item = B_items{i};
     item_inside = B_item>150; % inside
@@ -75,9 +75,9 @@ for i = 1:items_num
     B_items_totol_area = B_items_totol_area+B_items_area(i,1);
     B_items_area_per(i,1) = 100*B_items_area(i,1)./(size(B_item,1)*size(B_item,2));
     B_items_totol_tangle_area = B_items_totol_tangle_area+size(B_item,1)*size(B_item,2);
-    subplot(3,5,i+5),imshow(item_inside),title('inside');
+    %subplot(3,5,i+5),imshow(item_inside),title('inside');
 end
-
+result = B_items_circum;
 for i = 1:items_num
     B_items_area_average_per(i,1) = B_items_area(i,1)/(B_items_totol_tangle_area/items_num);
 end
