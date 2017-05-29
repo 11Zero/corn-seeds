@@ -2,13 +2,13 @@ function result = Main(filename)
 [B source]= Readimg(filename);%获取每个种子轮廓绝对坐标下的像素集合
 result = source;
 %load svmStruct  
-figure(1);
-hold on;
+
 B_items_tangle = zeros(length(B),4);
 img_with_rect = source;
+img1 = figure(1);
 imshow(img_with_rect);
 global svmStruct;
-svmStruct = load('C:\Users\Administrator\Desktop\corn-seeds\svmStruct.mat');
+svmStruct = load('svmStruct.mat');
 svmStruct = svmStruct.svmStruct;
 for i=1:length(B)
     B_max = max(B{i});
@@ -42,6 +42,7 @@ for i=1:length(B)
     assess = Judgeimg(rotateimg(B_item,B{i}));
     %rectangle('Position',[0,0,10,20],'EdgeColor','r');
     %img_with_rect = drawRect(img_with_rect,[B_items_tangle(i,3),B_items_tangle(i,1)],[B_items_tangle(i,4) - B_items_tangle(i,3)+1,B_items_tangle(i,2) - B_items_tangle(i,1)+1],1,[255,0,0]);
+    figure(img1);
     if(assess>0.9)
         rectangle('Position',[B_items_tangle(i,3),B_items_tangle(i,1),B_items_tangle(i,4) - B_items_tangle(i,3)+1,B_items_tangle(i,2) - B_items_tangle(i,1)+1],'EdgeColor','g');
     else
@@ -63,7 +64,6 @@ B_items_area_average_per = zeros(length(B_items),1);%面积占平均面积百分比
 B_items_totol_area = 0;%各个种子的总面积
 B_items_totol_tangle_area = 0;%各个种子所在矩形的总面积
 items_num = length(B);
-figure(2);
 for i = 1:items_num
     %subplot(3,5,i),imshow(B_items{i});
     B_items_circum(i,1) = length(find(B_items{i}==255));
@@ -78,6 +78,9 @@ for i = 1:items_num
     %subplot(3,5,i+5),imshow(item_inside),title('inside');
 end
 result = B_items_circum;
+img2 = figure(2);
+figure(img2);
+plot(result);
 for i = 1:items_num
     B_items_area_average_per(i,1) = B_items_area(i,1)/(B_items_totol_tangle_area/items_num);
 end
@@ -86,7 +89,7 @@ end
 
 
 %imshow(B{2});
-imshow(rotateimg(B_items{1},B{1}));
+% imshow(rotateimg(B_items{1},B{1}));
 
 % figure;
 % ExerciseOval(B{3});
@@ -94,6 +97,7 @@ imshow(rotateimg(B_items{1},B{1}));
 % ExerciseOval(B{4});
 % figure;
 % ExerciseOval(B{5});
+end
 
 
 
@@ -112,17 +116,10 @@ B_min(1) = -B_min(1);
 F=@(p,x)p(1)*x(:,1).^2+p(2)*x(:,1).*x(:,2)+p(3)*x(:,2).^2+p(4)*x(:,1)+p(5)*x(:,2)+p(6);%椭圆一般方程
 %?离散数据点
 Up=source_border;%excel文件路径
-% UpX=Up(:,2);
-% UpY=Up(:,1);
 %?p0系数初值
 p0=[1 1 1 1 1 1];
 %?拟合系数，最小二乘方法?
 p=nlinfit(Up,zeros(size(Up,1),1),F,p0);
-%plot(UpX,UpY,'r.');
-% UpMinx=min(UpX);
-% UpMaxx=max(UpX);
-% UpMiny=min(UpY);
-% UpMaxy=max(UpY);%?作图?
 A=p(1)/p(6);
 B=p(2)/p(6);
 C=p(3)/p(6);
@@ -132,40 +129,8 @@ E=p(5)/p(6);
 % Y_center = (B*D-2*A*E)/(4*A*C - B^2);
 %长轴倾角
 alpha=0.5 * atan(B/(A-C));%找到长轴倾角，以便旋转
-% disp(alpha);
-% axis equal;
-% axis([1,70,1,70]);
-% long_line_x=0:1:70;
-% long_line_y=long_line_x*tan(alpha)-tan(alpha)*X_center+Y_center;
-% plot(long_line_x,long_line_y);
-% plot(X_center,Y_center);
-% point_num = size(source_border);
-% for i=1:point_num(1)
-%     point = rot_alpha([UpX(i),UpY(i)],[X_center,Y_center],alpha);
-%     turned_point_x(i) = point(1);
-%     turned_point_y(i) = point(2);
-% end
-%     plot(turned_point_x,turned_point_y,'g.');
-% ezplot(@(x,y)F(p,[x,y]),[-1+UpMinx,1+UpMaxx,-1+UpMiny,1+UpMaxy]);
-% title('曲线拟合');
-%legend('样本点','拟合曲线');
-% %拟合椭圆边界
-% 
-% row=length(source_border');%椭圆边界点的个数，超定方程组的方程个数
-% %以下构造超定方程组的系数矩阵，5列
-% for i=1:row
-%     transfor(i,1)=source_border(i,2)^2;
-%     transfor(i,2)=source_border(i,2)*source_border(i,2);
-%     transfor(i,3)=source_border(i,1)^2;
-%     transfor(i,4)=source_border(i,2);
-%     transfor(i,5)=source_border(i,1);
-% end
-% bit=-10000*ones(1,row);
-% x=bit*transfor;
-% syms xx yy;
-% figure;
-% h=ezplot(x(1)*xx^2+x(2)*xx*(139-yy)+x(3)*(139-yy)^2+x(4)*xx+x(5)*(139-yy)+10000,[0,195,0,139]);
-% set(h,'Color','blue')
+end
+
 function B = rotateimg(source,border_cource)
 angel = round(ExerciseOval(border_cource)*180/pi);
 big_source = imresize(source,[200,200]);
@@ -174,6 +139,7 @@ B = imresize(B,size(source));
 B = im2bw(B,0.99);%二值化去除毛刺
 H = fspecial('unsharp');
 B = imfilter(B,H,'replicate');%拉普拉斯锐化
+end
 % figure;
 % imshow(B);
 function result = Judgeimg(img_mat)
@@ -183,4 +149,4 @@ im=imresize(img,[64,64]);
 hogt =hogcalculator(im); 
 global svmStruct;%全局向量机结构
 result = svmclassify(svmStruct,hogt);%result的值即为分类结果  
-
+end
