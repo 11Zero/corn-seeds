@@ -3,7 +3,7 @@ clear ;
 ReadList1  = textread('seeds\good\list.txt','%s','delimiter','\n');%载入正样本列表  
 sz1=size(ReadList1);  
   
-label1=ones(sz1(1),1); %正阳本标签  
+label1=ones(sz1(1),1); %正样本标签  
 ReadList2  = textread('seeds\bad\list.txt','%s','delimiter','\n');%载入负样本列表  
 sz2=size(ReadList2);  
 label2=zeros(sz2(1),1);%负样本标签  

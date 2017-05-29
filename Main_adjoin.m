@@ -40,7 +40,7 @@ function result = Main_adjoin(filename)
             B_item(floor((seed_rect_length - B_max(1)+2)/2)+B{i}(j,1)+1,floor((seed_rect_length - B_max(2)+2)/2)+B{i}(j,2)+1) = 255;
         end
         B_item_circum = length(find(B_item==255));
-        if(B_item_circum>250)%先认为周长>250的与元素为二粘连
+        if(B_item_circum>250)%先认为周长>250的与元素为二粘连，执行分水岭分割算法
             split_count = split_count+1;
             [source,split_line] = splitter(B_item_border,source_gray);%分水岭分割
             figure(img2);
@@ -140,7 +140,7 @@ function alpha = ExerciseOval(source_border)
 end
 
 
-function [source,split_line] = splitter(adjoin_item_border,source_gray)
+function [source,split_line] = splitter(adjoin_item_border,source_gray)%分割函数，内嵌分水岭算法，待完善
     max_yx = max(adjoin_item_border);
     min_yx = min(adjoin_item_border);
     items = source_gray(min_yx(1):max_yx(1),min_yx(2):max_yx(2));
@@ -189,9 +189,9 @@ end
 
 function result = Judgeimg(img_mat)
 %% 训练完成后保存 svmStruct即可对新输入的对象进行分类了无需再执行上面训练阶段代码  
-img=img_mat; 
-im=imresize(img,[64,64]);  
-hogt =hogcalculator(im); 
-global svmStruct;%全局向量机结构
-result = svmclassify(svmStruct,hogt);%result的值即为分类结果  
+    img=img_mat; 
+    im=imresize(img,[64,64]);  
+    hogt =hogcalculator(im); 
+    global svmStruct;%全局向量机结构
+    result = svmclassify(svmStruct,hogt);%result的值即为分类结果  
 end
