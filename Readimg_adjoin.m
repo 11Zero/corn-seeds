@@ -1,6 +1,6 @@
-function [B ,source]= Readimg_adjoin(filename)
-str = fullfile('pics_adjoin',filename);
-I=imread(str);
+function [B ,source]= Readimg_adjoin(fullfilename,handles)
+%str = fullfile(fullfilename);
+I=imread(fullfilename);
 source  = I;
 I0=I;
 
@@ -15,7 +15,8 @@ else
     I_gray=I;
 end
 
-
+axes(handles.axes_origin);
+imshow(I_gray);
 I_bw=im2bw(I_gray,0.25);
 
 %% 形态学处理

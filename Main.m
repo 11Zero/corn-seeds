@@ -1,11 +1,14 @@
-function result = Main(filename)
-    [B source]= Readimg(filename);%获取每个种子轮廓绝对坐标下的像素集合，B为所有种子边缘像素坐标集合，source为原始图像矩阵信息
+function result = Main(fullfilename,handles)
+
+    [B source]= Readimg(fullfilename,handles);%获取每个种子轮廓绝对坐标下的像素集合，B为所有种子边缘像素坐标集合，source为原始图像矩阵信息
     result = source;%result为输出结果，根据需要随意指定
     %load svmStruct  
 
     B_items_tangle = zeros(length(B),4);%该矩阵用于存储一张图中所有种子的矩形框坐标，1234位分别代表矩形框的上下左右像素位
     img_with_rect = source;%该矩阵为带矩形框的图片矩阵
-    img1 = figure(1);
+    %img1 = figure(1);
+    
+    axes(handles.axes_taged);
     imshow(img_with_rect);%画图带矩形，
     global svmStruct;%定义向量机全局变量
     svmStruct = load('svmStruct.mat');%从mat文件中载入向量机训练结果
@@ -37,7 +40,7 @@ function result = Main(filename)
         end
 
         assess = Judgeimg(rotateimg(B_item,B{i}));%该函数用向量机特征库判断当前种子好坏，assess为结果
-        figure(img1);
+        axes(handles.axes_taged);
         if(assess>0.9)%如果判断结果概率大于0.9，就框绿色
             rectangle('Position',[B_items_tangle(i,3),B_items_tangle(i,1),B_items_tangle(i,4) - B_items_tangle(i,3)+1,B_items_tangle(i,2) - B_items_tangle(i,1)+1],'EdgeColor','g');
         else%否则，就框红色
@@ -72,9 +75,9 @@ function result = Main(filename)
         %subplot(3,5,i+5),imshow(item_inside),title('inside');
     end
     result = B_items_circum;%result为种子周长集合
-    img2 = figure(2);
-    figure(img2);
-    plot(result);%输出种子周长曲线
+%     img2 = figure(2);
+%     figure(img2);
+%     plot(result);%输出种子周长曲线
     for i = 1:items_num
         B_items_area_average_per(i,1) = B_items_area(i,1)/(B_items_totol_tangle_area/items_num);%计算每个种子面积占平均框区面积的百分比
     end

@@ -1,18 +1,19 @@
-function result = Main_adjoin(filename)
-    close all;
-    [B source]= Readimg_adjoin(filename);%获取每个种子轮廓绝对坐标下的像素集合
+function result = Main_adjoin(filename,handles)
+    
+    [B source]= Readimg_adjoin(filename,handles);%获取每个种子轮廓绝对坐标下的像素集合
     result = source;
     %load svmStruct  
     B_items_tangle = zeros(length(B),4);
     img_with_rect = source;
     source_gray = rgb2gray(source);
-    img1 = figure(1);
+    %img1 = figure(1);
+    axes(handles.axes_taged);
     imshow(img_with_rect);
     global svmStruct;
     svmStruct = load('svmStruct.mat');
     svmStruct = svmStruct.svmStruct;
     split_count = 0;
-    img2 = figure(2);
+%     img2 = figure(2);
     for i=1:length(B)
         B_max = max(B{i});
         B_min = min(B{i});
@@ -43,9 +44,9 @@ function result = Main_adjoin(filename)
         if(B_item_circum>250)%先认为周长>250的与元素为二粘连，执行分水岭分割算法
             split_count = split_count+1;
             [source,split_line] = splitter(B_item_border,source_gray);%分水岭分割
-            figure(img2);
-            subplot(2,8,split_count),imshow(source);
-            subplot(2,8,split_count+8),imshow(split_line);
+%             figure(img2);
+%             subplot(2,8,split_count),imshow(source);
+%             subplot(2,8,split_count+8),imshow(split_line);
         end
     %     set(B_item,'position',[0,0,70,70])
     %     im=imresize(B_item,[70,70]);
@@ -54,13 +55,14 @@ function result = Main_adjoin(filename)
         assess = Judgeimg(rotateimg(B_item,B{i}));
         %rectangle('Position',[0,0,10,20],'EdgeColor','r');
         %img_with_rect = drawRect(img_with_rect,[B_items_tangle(i,3),B_items_tangle(i,1)],[B_items_tangle(i,4) - B_items_tangle(i,3)+1,B_items_tangle(i,2) - B_items_tangle(i,1)+1],1,[255,0,0]);
-        figure(img1);
+        %%figure(img1);
+        axes(handles.axes_taged);
         if(assess>0.9)
             rectangle('Position',[B_items_tangle(i,3),B_items_tangle(i,1),B_items_tangle(i,4) - B_items_tangle(i,3)+1,B_items_tangle(i,2) - B_items_tangle(i,1)+1],'EdgeColor','g');
         else
             rectangle('Position',[B_items_tangle(i,3),B_items_tangle(i,1),B_items_tangle(i,4) - B_items_tangle(i,3)+1,B_items_tangle(i,2) - B_items_tangle(i,1)+1],'EdgeColor','r');
         end
-            text(B_items_tangle(i,3),B_items_tangle(i,1),sprintf('%d',287+i),'color','g');
+            text(B_items_tangle(i,3),B_items_tangle(i,1),sprintf('%d',i),'color','g');
         %line([B_items_tangle(i,3) B_items_tangle(i,1)],[B_items_tangle(i,4) B_items_tangle(i,1)],'color','b','LineWidth',3);
          B_items{i,1} = B_item;%获取每个种子相对坐标下像素
     %      path = fullfile('C:\Users\Administrator\Desktop\corn-seeds\seeds',sprintf('%03d.jpg',287+i));
@@ -91,9 +93,9 @@ function result = Main_adjoin(filename)
         %subplot(3,5,i+5),imshow(item_inside),title('inside');
     end
     result = B_items_circum;
-    figure(3);
-    plot(result);
-    title(filename);
+%     figure(3);
+%     plot(result);
+%     title(filename);
     for i = 1:items_num
         B_items_area_average_per(i,1) = B_items_area(i,1)/(B_items_totol_tangle_area/items_num);
     end

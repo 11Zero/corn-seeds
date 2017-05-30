@@ -1,3 +1,4 @@
+function correct_rate = exercise()
 clear ;  
 %% 训练阶段  
 ReadList1  = textread('seeds\good\list.txt','%s','delimiter','\n');%载入正样本列表  
@@ -36,8 +37,9 @@ end
 cp = classperf(label);  
 svmStruct = svmtrain(data(train,:),label(train));  
 %save svmStruct svmStruct  
-save('svmStruct.mat','svmStruct');
+
 classes = svmclassify(svmStruct,data(test,:));  
-classperf(cp,classes,test);  
-cp.CorrectRate
+classperf(cp,classes,test);
+correct_rate = cp.CorrectRate;
+save('svmStruct.mat','svmStruct','correct_rate');
 

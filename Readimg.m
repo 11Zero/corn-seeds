@@ -1,6 +1,6 @@
-function [B ,source]= Readimg(filename)
-str = fullfile('pics',filename);
-I=imread(str);
+function [B ,source]= Readimg(fullfilename,handles)
+%str = fullfile('pics',filename);
+I=imread(fullfilename);
 source  = I;
 I0=I;
 % I=imresize(I,[696 928]);
@@ -20,7 +20,11 @@ else
     I_gray=I;
 end
 
+%figure(2001);
 
+
+axes(handles.axes_origin);
+imshow(I_gray);
 I_bw=im2bw(I_gray,0.25);
 
 %% 形态学处理
